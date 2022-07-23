@@ -25,53 +25,69 @@ void swap(int *a, int *b)
  * @array: arrray to be sorted
  * @low: first element of array
  * @high: last element of array
- * @size: length of array
  *
  * Return: index of pivot
  */
 
-int get_pivot(int *array, int low, int high, size_t size)
+int get_pivot(int *array, int low, int high)
 {
-	int pivot, i, j;
+	int pivot, i, j, temp;
+	static int size, k;
+
+	if (k == 0)
+	{
+		size = high + 1;
+		k++;
+	}
 
 	pivot = array[high];
-	i = (low - 1);
+	i = low;
 
-	for (j = low; j <= high - 1; j++)
+	for (j = low; j < high; j++)
 	{
-		if (array[j] < pivot)
+		if (array[j] <= pivot)
 		{
+			if (i != j)
+			{
+				temp = array[i];
+				array[i] = array[j];
+				array[j] = temp;
+				print_array(array, size);
+			}
 			i++;
-			swap(&array[i], &array[j]);
 		}
 	}
 
-	swap(&array[i + 1], &array[high]);
-	print_array(array, size);
+	if (i != high)
+	{
+		temp = array[i];
+		array[i] = array[high];
+		array[high] = temp;
+		print_array(array, size);
+	}
 
-	return (i + 1);
+	return (i);
 }
 
 /**
  * quicksort_recursive - recursive quick sort function
  *
  * @array: arrray to be sorted
- * @size: size of the array
  * @low: first element of array
  * @high: last element of array
  *
  * Return: void
  */
 
-void quicksort_recursive(int *array, int low, int high, size_t size)
+void quicksort_recursive(int *array, int low, int high)
 {
 	int pivot;
 
 	if (low < high)
 	{
-		pivot = get_pivot(array, low, high, size);
-		quicksort_recursive(array, low, pivot - 1, size);
-		quicksort_recursive(array, pivot + 1, high, size);
+		pivot = get_pivot(array, low, high);
+		quicksort_recursive(array, low, pivot - 1);
+		quicksort_recursive(array, pivot + 1, high);
 	}
 }
 
@@ -81,13 +97,14 @@ void quicksort_recursive(int *array, int low, int high, size_t size)
  *
  * @array: arrray to be sorted
  * @size: size of the array
+ *
  * Return: void
  */
 
 void quick_sort(int *array, size_t size)
 {
-	if (array == NULL || size < 2)
+	if (array == NULL)
 		return;
 
-	quicksort_recursive(array, 0, size - 1, size);
+	quicksort_recursive(array, 0, size - 1);
 }
